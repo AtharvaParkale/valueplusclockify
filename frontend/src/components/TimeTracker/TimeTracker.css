@@ -1,0 +1,23 @@
+.tracker-main-container-section-one-timer-container input {
+  width: 93%;
+  height: 60%;
+  padding-left: 1vw;
+  cursor: pointer;
+  /* outline: none; */
+  border: none;
+  /* outline: 1px solid #80808054; */
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #666666;
+}
+
+.tracker-main-container-section-one-timer-container input:focus {
+  outline: 1px solid #80808054;
+}
+.tracker-main-container-section-one-timer-container input::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #666666a5;
+  font-weight: 500;
+}
+
