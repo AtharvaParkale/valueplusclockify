@@ -9,7 +9,7 @@ const sessionSchema = new mongoose.Schema({
     type: Array,
   },
   totalTime: {
-    type: Number,
+    type: String,
     required: [true, "Total time not found !"],
   },
   isBillable: {
@@ -17,12 +17,12 @@ const sessionSchema = new mongoose.Schema({
     default: false,
   },
   startTime: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    
   },
   endTime: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    
   },
   date: {
     type: Date,

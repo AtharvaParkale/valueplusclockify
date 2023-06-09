@@ -4,11 +4,13 @@ import ErrorHandler from "../utils/errorHandler.js";
 // CREATE SESSION
 export const createSession = async (req, res, next) => {
   try {
-    const session = await Session.create(req.body);
-    res.status(201).json({
-      success: true,
-      session,
-    });
+
+    const newSession = new Session(req.body);
+    const session = await newSession.save();
+
+    const sessions = await Session.find();
+    res.status(200).json(sessions);
+    
   } catch (err) {
     next(err);
   }
@@ -28,7 +30,7 @@ export const getAllSessions = async (req, res, next) => {
 };
 
 //UPDATE SESSION
-export const updateSession = async (req, res) => {
+export const updateSession = async (req, res,next) => {
   try {
     let session = await Session.findById(req.params.id);
 

@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box, Button, Divider, Typography } from "@mui/material";
+import axios from "axios";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined";
@@ -10,6 +11,47 @@ function TimeTracker() {
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef(null);
 
+  const [myData, setMyData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [totalTime, setTotalTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
+  const [flag, setFlag] = useState(true);
+
+  const fetchNotes = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:4003/api/v1/sessions");
+      setMyData(data.sessions);
+      return data;
+    } catch (err) {
+      console.log("Error while fetching the data");
+    }
+  };
+
+  const handleAddSession = async (t, s, e) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4003/api/v1/session/new",
+        {
+          description: "",
+          totalTime: t,
+          startTime: s,
+          endTime: e,
+        }
+      );
+      // console.log(data);
+      setMyData(data);
+    } catch (error) {
+      console.log("hi");
+      console.log(error.response.data);
+    }
+  };
+
+  let tt;
+  let st;
+  let et;
   const startTimer = () => {
     if (!isRunning) {
       setIsRunning(true);
@@ -34,11 +76,59 @@ function TimeTracker() {
       clearInterval(intervalRef.current);
       setIsRunning(false);
     }
+
+    if (isRunning) {
+      const x =
+        formatTime(time.hours) +
+        ":" +
+        formatTime(time.minutes) +
+        ":" +
+        formatTime(time.seconds);
+
+      tt = x;
+
+      setTotalTime(x);
+
+      setTime({ seconds: 0, minutes: 0, hours: 0 });
+    }
+
+    const currentDate = new Date(Date.now());
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+    }).format(currentDate);
+
+    if (flag) {
+      setStartTime(formattedDate);
+      console.log("hi");
+      console.log(formattedDate);
+      setStartTime(formattedDate);
+      setFlag(!flag);
+      // console.log(forattedDate);
+    } else {
+      setEndTime(formattedDate);
+      setFlag(!flag);
+      et = formattedDate;
+      st = startTime;
+      handleAddSession(tt, st, et);
+    }
   };
 
   const formatTime = (value) => {
     return value.toString().padStart(2, "0");
   };
+
+  useEffect(() => {
+    fetchNotes().then((data) => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {}, [myData]);
+  useEffect(() => {}, [endTime, startTime, totalTime]);
+
   return (
     <Box
       sx={{
@@ -228,7 +318,12 @@ function TimeTracker() {
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={startTimer}
+                    onClick={() => {
+                      startTimer();
+                      // console.log(startTime);
+                      // console.log(endTime);
+                      // console.log(totalTime);
+                    }}
                     sx={{
                       backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
 
