@@ -4,13 +4,26 @@ import ErrorHandler from "../utils/errorHandler.js";
 // CREATE SESSION
 export const createSession = async (req, res, next) => {
   try {
-
     const newSession = new Session(req.body);
     const session = await newSession.save();
 
-    const sessions = await Session.find();
-    res.status(200).json(sessions);
-    
+    const sessions = await Session.find().sort({ createdAt : -1});
+    const gt = await Session.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalPoints: {
+            $sum: "$grandTotal",
+          },
+        },
+      },
+    ]);
+
+    const sumOfTime = gt[0].totalPoints;
+    res.status(200).json({
+      sessions,
+      sumOfTime,
+    });
   } catch (err) {
     next(err);
   }
@@ -19,18 +32,36 @@ export const createSession = async (req, res, next) => {
 // Get All Session
 export const getAllSessions = async (req, res, next) => {
   try {
-    const sessions = await Session.find();
-    res.status(200).json({
-      success: true,
-      sessions,
-    });
+    const sessions = await Session.find().sort({ createdAt : -1});
+
+    
+
+    if (sessions.length != 0) {
+      const gt = await Session.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalPoints: {
+              $sum: "$grandTotal",
+            },
+          },
+        },
+      ]);
+
+      const sumOfTime = gt[0].totalPoints;
+      res.status(200).json({
+        success: true,
+        sessions,
+        sumOfTime,
+      });
+    }
   } catch (err) {
     next(err);
   }
 };
 
 //UPDATE SESSION
-export const updateSession = async (req, res,next) => {
+export const updateSession = async (req, res, next) => {
   try {
     let session = await Session.findById(req.params.id);
 
@@ -63,9 +94,32 @@ export const deleteSession = async (req, res, next) => {
     }
 
     await session.deleteOne();
+
+    const sessions = await Session.find().sort({ createdAt : -1});
+
+    if (sessions.length != 0) {
+      const gt = await Session.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalPoints: {
+              $sum: "$grandTotal",
+            },
+          },
+        },
+      ]);
+
+      const sumOfTime = gt[0].totalPoints;
+
+      res.status(200).json({
+        sessions,
+        sumOfTime,
+      });
+    }
+
     res.status(200).json({
-      success: true,
-      message: "Session deleted successfully",
+      sessions,
+      sumOfTime: 0,
     });
   } catch (err) {
     next(err);

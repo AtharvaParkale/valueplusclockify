@@ -18,6 +18,53 @@
 .tracker-main-container-section-one-timer-container input::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #666666a5;
+  font-weight: 400;
+}
+.css-17ffvgn-MuiTypography-root {
+  padding-bottom: 8px !important;
+  padding-top: 8px !important;
   font-weight: 500;
+  color: red;
+  cursor: pointer;
 }
 
+.tracker-description2-container input {
+  font-weight: 400;
+}
+.session-date{
+  color: #999;
+  font-size: 0.8rem;
+  margin-left: 1.5vw;
+}
+.session-stats-container span{
+  color: #999;
+  font-size: 0.8rem;
+}
+.session-stats-container p{
+  font-weight: 500;
+  font-size:1.2rem ;
+  margin-left: 1vw;
+  margin-right: 2vw;
+}
+.all-session-holder-container{
+  overflow-y: scroll;
+}
+
+.all-session-holder-container::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Track */
+.all-session-holder-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.all-session-holder-container::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.all-session-holder-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

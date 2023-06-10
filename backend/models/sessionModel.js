@@ -24,9 +24,12 @@ const sessionSchema = new mongoose.Schema({
     type: String,
     
   },
+  grandTotal:{
+    type:Number,
+  },
   date: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    
   },
   createdAt: {
     type: Date,
