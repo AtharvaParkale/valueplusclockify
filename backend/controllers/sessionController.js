@@ -7,7 +7,7 @@ export const createSession = async (req, res, next) => {
     const newSession = new Session(req.body);
     const session = await newSession.save();
 
-    const sessions = await Session.find().sort({ createdAt : -1});
+    const sessions = await Session.find().sort({ createdAt: -1 });
     const gt = await Session.aggregate([
       {
         $group: {
@@ -32,9 +32,7 @@ export const createSession = async (req, res, next) => {
 // Get All Session
 export const getAllSessions = async (req, res, next) => {
   try {
-    const sessions = await Session.find().sort({ createdAt : -1});
-
-    
+    const sessions = await Session.find().sort({ createdAt: -1 });
 
     if (sessions.length != 0) {
       const gt = await Session.aggregate([
@@ -53,6 +51,12 @@ export const getAllSessions = async (req, res, next) => {
         success: true,
         sessions,
         sumOfTime,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        sessions,
+        sumOfTime:0
       });
     }
   } catch (err) {
@@ -95,7 +99,7 @@ export const deleteSession = async (req, res, next) => {
 
     await session.deleteOne();
 
-    const sessions = await Session.find().sort({ createdAt : -1});
+    const sessions = await Session.find().sort({ createdAt: -1 });
 
     if (sessions.length != 0) {
       const gt = await Session.aggregate([
@@ -115,12 +119,12 @@ export const deleteSession = async (req, res, next) => {
         sessions,
         sumOfTime,
       });
+    } else {
+      res.status(200).json({
+        sessions,
+        sumOfTime: 0,
+      });
     }
-
-    res.status(200).json({
-      sessions,
-      sumOfTime: 0,
-    });
   } catch (err) {
     next(err);
   }
