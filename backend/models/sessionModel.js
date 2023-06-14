@@ -31,6 +31,9 @@ const sessionSchema = new mongoose.Schema({
     type: String,
     
   },
+  project:{
+    type:String
+  },
   createdAt: {
     type: Date,
     default: Date.now,
