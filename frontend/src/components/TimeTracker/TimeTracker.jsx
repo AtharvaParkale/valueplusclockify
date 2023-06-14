@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { Box, Button, Divider, Popover, Typography } from "@mui/material";
 import axios from "axios";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -18,6 +18,7 @@ function TimeTracker() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
+  const [projectTitle, setProjectTitle] = useState("Project");
   const [flag, setFlag] = useState(true);
   const [formattedTotalTime, setFormattedTotalTime] = useState("");
 
@@ -33,20 +34,23 @@ function TimeTracker() {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
 
+  console.log(projectTitle);
+
   const fetchNotes = async () => {
     try {
       const { data } = await axios.get("http://localhost:4003/api/v1/sessions");
-      console.log(data);
+      // console.log(data);
 
       const formattedTime = convertMillisecondsToHMS(data.sumOfTime);
       setFormattedTotalTime(formattedTime);
 
-      setMyData(data.groupedData);
+      // setMyData(data.groupedData);
+      // setMyData(data.groupedData);
+      setMyData(data.groupedDataTwo);
 
       if (data.sessions.length === 0) {
         setIsLoading(false);
       }
-      console.log(data.sessions.length);
 
       setIsLoading(false);
       return data;
@@ -82,6 +86,7 @@ function TimeTracker() {
           endTime: e,
           date: today,
           grandTotal: g,
+          project: projectTitle,
         }
       );
 
@@ -89,7 +94,8 @@ function TimeTracker() {
       setFormattedTotalTime(formattedTime);
 
       setDescription("");
-      setMyData(data.groupedData);
+      // setMyData(data.groupedData);
+      setMyData(data.groupedDataTwo);
     } catch (error) {
       console.log("hi");
       console.log(error.response.data);
@@ -105,7 +111,8 @@ function TimeTracker() {
       const formattedTime = convertMillisecondsToHMS(data.sumOfTime);
       setFormattedTotalTime(formattedTime);
 
-      setMyData(data.groupedData);
+      // setMyData(data.groupedData);
+      setMyData(data.groupedDataTwo);
 
       setIsLoading(false);
     } catch (err) {
@@ -157,7 +164,7 @@ function TimeTracker() {
       tt = x;
       gt = milliseconds;
 
-      console.log(gt);
+      // console.log(gt);
       setTotalTime(x);
 
       setTime({ seconds: 0, minutes: 0, hours: 0 });
@@ -167,7 +174,6 @@ function TimeTracker() {
     const formattedDate = new Intl.DateTimeFormat("en-US", {
       hour: "numeric",
       minute: "numeric",
-      second: "numeric",
       hour12: false,
     }).format(currentDate);
 
@@ -202,6 +208,7 @@ function TimeTracker() {
     totalTime,
     description,
     formattedTotalTime,
+    projectTitle,
   ]);
 
   return (
@@ -253,7 +260,7 @@ function TimeTracker() {
             // border: "2px solid black",
             width: "84%",
             height: "100%",
-            backgroundColor: "#f2f6f8",
+            backgroundColor: "white",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
@@ -263,12 +270,13 @@ function TimeTracker() {
           <Box
             className="tracker-main-container-section-one"
             sx={{
-              //   border: "1px solid black",
+              // border: "1px solid black",
               width: "100%",
               height: "21vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginTop:"2vh"
             }}
           >
             <Box
@@ -288,7 +296,7 @@ function TimeTracker() {
               <Box
                 className="tracker-description-container"
                 sx={{
-                  //   border: "1px solid black",
+                  // border: "1px solid black",
                   width: "55%",
                   height: "100%",
                   display: "flex",
@@ -327,7 +335,7 @@ function TimeTracker() {
                     justifyContent: "center",
                   }}
                 >
-                  <AddCircleOutlineIcon
+                  {/* <AddCircleOutlineIcon
                     sx={{
                       fontSize: "18px",
                       marginRight: "5px",
@@ -343,7 +351,21 @@ function TimeTracker() {
                     }}
                   >
                     Project
-                  </Typography>
+                  </Typography> */}
+
+                  <select
+                    name="select-value"
+                    id="select-project-title"
+                    value={projectTitle}
+                    onChange={(e) => {
+                      setProjectTitle(e.target.value);
+                    }}
+                  >
+                    <option value="Project 1">Project - 1</option>
+                    <option value="Project 2">Project - 2</option>
+                    <option value="Project 3">Project - 3</option>
+                    <option value="Project 4">Project - 4</option>
+                  </select>
                 </Box>
                 <Box
                   className="tags-section"
@@ -462,12 +484,15 @@ function TimeTracker() {
                     <Box
                       className="session-card"
                       sx={{
+                        borderTop: "1px solid #C6D2D9",
                         borderBottom: "1px solid #C6D2D9",
                         width: "100%",
                         height: "fit-content",
                         display: "flex",
                         alignItems: "center",
                         flexDirection: "column",
+                        // marginBottom: "3vh",
+                        marginTop: "2vh",
                       }}
                       key={day._id}
                     >
@@ -484,187 +509,271 @@ function TimeTracker() {
                           borderBottom: "1px solid #C6D2D9",
                         }}
                       >
-                        <span className="session-date">{day._id}</span>
-                        <span className="day-sessions-time">
-                          <span className="day-sessions-time-tag">Daily total : </span>
-                          {`${Math.floor(
-                            day.grandTotal / (1000 * 60 * 60)
-                          )}:${Math.floor(
-                            (day.grandTotal / (1000 * 60)) % 60
-                          )}:${Math.floor((day.grandTotal / 1000) % 60)}`}
-                        </span>
-                      </Box>
-
-                      {day.data.map((session) => (
-                        <Box
-                          className="session-card-section-two"
+                        <Typography
+                          variant="span"
                           sx={{
-                            // border: "1px solid red",
-                            borderBottom: "1px solid #C6D2D9",
-                            width: "100%",
-                            height: "6vh",
-                            backgroundColor: "white",
+                            color: "#999",
+                            fontSize: "0.8rem",
+                            marginLeft: "1.5vw",
                           }}
-                          key={session._id}
                         >
-                          <Box
-                            className="tracker-main-container-section-one-timer-container"
+                          {day._id}
+                        </Typography>
+                        <Typography variant="span">
+                          <Typography
+                            variant="span"
                             sx={{
-                              width: "100%",
-                              height: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
+                              color: "#999",
+                              fontSize: "0.8rem",
+                              marginRight: "1vw",
                             }}
                           >
+                            Daily total :{" "}
+                          </Typography>
+
+                          <Typography
+                            variant="span"
+                            sx={{
+                              marginRight: "2vw",
+                              fontWeight: "500",
+                              fontSize: "1.1rem",
+                            }}
+                          >{`${Math.floor(day.grandTotal / (1000 * 60 * 60))
+                            .toString()
+                            .padStart(2, "0")}:${Math.floor(
+                            (day.grandTotal / (1000 * 60)) % 60
+                          )
+                            .toString()
+                            .padStart(2, "0")}:${Math.floor(
+                            (day.grandTotal / 1000) % 60
+                          )
+                            .toString()
+                            .padStart(2, "0")}`}</Typography>
+                        </Typography>
+                      </Box>
+
+                      {day.projects.map((project) => (
+                        <Fragment key={project.project}>
+                          <Box
+                            className="projects-header"
+                            sx={{
+                              // border: "1px solid black",
+                              width: "100%",
+                              height: "6vh",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Typography
+                              variant="span"
+                              sx={{
+                                color: "#03a9f4",
+                                fontWeight: "500",
+                                fontSize: "0.8rem",
+                                marginLeft: "1.5vw",
+                              }}
+                            >
+                              {project.project}
+                            </Typography>
+                            <Typography variant="span">
+                              <Typography
+                                variant="span"
+                                sx={{
+                                  color: "#999",
+                                  fontSize: "0.8rem",
+                                  marginRight: "1vw",
+                                }}
+                              >
+                                Project total :{" "}
+                              </Typography>
+
+                              <Typography
+                                variant="span"
+                                sx={{
+                                  marginRight: "2vw",
+                                  fontWeight: "500",
+                                  fontSize: "1rem",
+                                  color: "#999",
+                                }}
+                              >{`${Math.floor(
+                                project.grandTotal / (1000 * 60 * 60)
+                              )
+                                .toString()
+                                .padStart(2, "0")}:${Math.floor(
+                                (project.grandTotal / (1000 * 60)) % 60
+                              )
+                                .toString()
+                                .padStart(2, "0")}:${Math.floor(
+                                (project.grandTotal / 1000) % 60
+                              )
+                                .toString()
+                                .padStart(2, "0")}`}</Typography>
+                            </Typography>
+                          </Box>
+
+                          {project.data.map((session) => (
                             <Box
-                              className="tracker-description2-container"
+                              className="session-card-section-two"
                               sx={{
                                 // border: "1px solid red",
-                                width: "40%",
-                                height: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
+                                borderBottom: "1px solid #C6D2D9",
+                                borderTop: "1px solid #C6D2D9",
+                                width: "100%",
+                                height: "6vh",
+                                backgroundColor: "white",
                               }}
-                            >
-                              <input
-                                type="text"
-                                value={session.description}
-                                onChange={() => {}}
-                              />
-                            </Box>
-                            <Box
-                              className="tracker-options-container"
-                              sx={{
-                                // border: "1px solid blue",
-                                width: "60%",
-                                height: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                              }}
+                              key={session._id}
                             >
                               <Box
-                                className="add-project-section"
+                                className="tracker-main-container-section-one-timer-container"
                                 sx={{
-                                  // border: "1px solid black",
+                                  width: "100%",
                                   height: "100%",
-                                  width: "25%",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                 }}
                               >
-                                <AddCircleOutlineIcon
+                                <Box
+                                  className="tracker-description2-container"
                                   sx={{
-                                    fontSize: "18px",
-                                    marginRight: "5px",
-                                    color: "#03a9f4",
-                                  }}
-                                />
-                                <Typography
-                                  variant="p"
-                                  sx={{
-                                    fontWeight: "500",
-                                    color: "#03a9f4",
-                                    fontSize: "15px",
+                                    // border: "1px solid red",
+                                    width: "40%",
+                                    height: "100%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                   }}
                                 >
-                                  Project
-                                </Typography>
-                              </Box>
-                              <Box
-                                className="tags-section"
-                                sx={{
-                                  // border: "1px solid black",
-                                  height: "100%",
-                                  width: "38%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-around",
-                                }}
-                              >
-                                <Divider orientation="vertical" />
-
-                                {session.startTime}
-                                <Divider orientation="vertical" />
-
-                                {session.endTime}
-                                <Divider orientation="vertical" />
-                              </Box>
-                              <Box
-                                className="timer-value-section"
-                                sx={{
-                                  // border: "1px solid black",
-                                  height: "100%",
-                                  width: "25%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontWeight: "500",
-                                  fontSize: "19px",
-                                }}
-                              >
-                                {session.totalTime}
-                              </Box>
-                              <Box
-                                className="start-timer-section"
-                                sx={{
-                                  // border: "1px solid black",
-                                  height: "100%",
-                                  width: "10%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                {/* <MoreVertIcon
-                              variant="contained"
-                              onClick={() => {
-                                handleDeleteSession(session._id);
-                              }}
-                            /> */}
-
-                                <DeleteIcon
-                                  variant="contained"
-                                  onClick={() => {
-                                    handleDeleteSession(session._id);
-                                  }}
+                                  <input
+                                    type="text"
+                                    value={session.description}
+                                    onChange={() => {}}
+                                  />
+                                </Box>
+                                <Box
+                                  className="tracker-options-container"
                                   sx={{
-                                    color: "#7b7b7b",
+                                    // border: "1px solid blue",
+                                    width: "60%",
+                                    height: "100%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
                                   }}
-                                />
+                                >
+                                  <Box
+                                    className="add-project-section"
+                                    sx={{
+                                      // border: "1px solid black",
+                                      height: "100%",
+                                      width: "25%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    {/* <AddCircleOutlineIcon
+                                      sx={{
+                                        fontSize: "18px",
+                                        marginRight: "5px",
+                                        color: "#03a9f4",
+                                      }}
+                                    />
+                                    <Typography
+                                      variant="p"
+                                      sx={{
+                                        fontWeight: "500",
+                                        color: "#03a9f4",
+                                        fontSize: "15px",
+                                      }}
+                                    >
+                                      {project.project}
+                                    </Typography> */}
+                                  </Box>
+                                  <Box
+                                    className="tags-section"
+                                    sx={{
+                                      // border: "1px solid black",
+                                      height: "100%",
+                                      width: "38%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-around",
+                                    }}
+                                  >
+                                    <Divider orientation="vertical" />
+
+                                    {session.startTime}
+                                    <Divider orientation="vertical" />
+
+                                    {session.endTime}
+                                    <Divider orientation="vertical" />
+                                  </Box>
+                                  <Box
+                                    className="timer-value-section"
+                                    sx={{
+                                      // border: "1px solid black",
+                                      height: "100%",
+                                      width: "25%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontWeight: "500",
+                                      fontSize: "19px",
+                                    }}
+                                  >
+                                    {session.totalTime}
+                                  </Box>
+                                  <Box
+                                    className="start-timer-section"
+                                    sx={{
+                                      // border: "1px solid black",
+                                      height: "100%",
+                                      width: "10%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <DeleteIcon
+                                      variant="contained"
+                                      onClick={() => {
+                                        handleDeleteSession(session._id);
+                                      }}
+                                      sx={{
+                                        color: "#7b7b7b",
+                                        fontSize: "20px",
+                                      }}
+                                    />
+                                  </Box>
+                                </Box>
                               </Box>
                             </Box>
-                          </Box>
-                        </Box>
+                          ))}
+                        </Fragment>
                       ))}
                     </Box>
                   ))}
                 </>
                 // <>
-
-                // {
-                //   myData.map((day)=>(
-                //     <>
+                //   {myData.map((day) => (
                 //     <Box>
                 //       {day._id}
-                //     </Box>
-                //     <Box>
-                //       {
-                //         day.data.map((session)=>(
+                //       {day.projects.map((project) => (
+                //         <Box>
+                //           {project.project}
                 //           <Box>
-                //             {session.startTime}
+                //             {project.data.map((session) => (
+                //               <Box>{session.startTime}</Box>
+                //             ))}
                 //           </Box>
-                //         ))
-                //       }
+                //         </Box>
+                //       ))}
                 //     </Box>
-
-                //     </>
-                //   ))
-                // }
+                //   ))}
                 // </>
               )}
             </Box>

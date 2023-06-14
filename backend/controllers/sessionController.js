@@ -22,6 +22,32 @@ export const createSession = async (req, res, next) => {
       }
     ];
 
+    const aggregationPipelineTwo = [
+      {
+        $group: {
+          _id: { date: "$date", project: "$project" },
+          data: { $push: "$$ROOT" },
+          grandTotal: { $sum: "$grandTotal" }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          projects: {
+            $push: {
+              project: "$_id.project",
+              data: "$data",
+              grandTotal: { $sum: "$grandTotal" }
+            }
+          },
+          grandTotal: { $sum: "$grandTotal" } 
+          
+        }
+      }
+    ];
+
+    const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
+
     const groupedData = await Session.aggregate(aggregationPipeline);
     const gt = await Session.aggregate([
       {
@@ -40,7 +66,8 @@ export const createSession = async (req, res, next) => {
     res.status(200).json({
       sessions,
       sumOfTime,
-      groupedData
+      groupedData,
+      groupedDataTwo
     });
   } catch (err) {
     next(err);
@@ -67,7 +94,38 @@ export const getAllSessions = async (req, res, next) => {
       }
     ];
 
-    const groupedData = await Session.aggregate(aggregationPipeline).sort({ createdAt: 1 });
+    const aggregationPipelineTwo = [
+      {
+        $group: {
+          _id: { date: "$date", project: "$project" },
+          data: { $push: "$$ROOT" },
+          grandTotal: { $sum: "$grandTotal" }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          projects: {
+            $push: {
+              project: "$_id.project",
+              data: "$data",
+              grandTotal: { $sum: "$grandTotal" }
+            }
+          },
+          grandTotal: { $sum: "$grandTotal" } 
+          
+        }
+      },
+      {
+        $sort: {
+          _id: 1
+        }
+      }
+    ];
+
+    const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
+
+    const groupedData = await Session.aggregate(aggregationPipeline).sort({ createdAt: -1 });
 
     if (sessions.length != 0) {
       const gt = await Session.aggregate([
@@ -87,7 +145,8 @@ export const getAllSessions = async (req, res, next) => {
         success: true,
         sessions,
         sumOfTime,
-        groupedData
+        groupedData,
+        groupedDataTwo
       });
 
     } else {
@@ -95,7 +154,8 @@ export const getAllSessions = async (req, res, next) => {
         success: true,
         sessions,
         sumOfTime:0,
-        groupedData
+        groupedData,
+        groupedDataTwo
       });
     }
   } catch (err) {
@@ -151,6 +211,32 @@ export const deleteSession = async (req, res, next) => {
       }
     ];
 
+    const aggregationPipelineTwo = [
+      {
+        $group: {
+          _id: { date: "$date", project: "$project" },
+          data: { $push: "$$ROOT" },
+          grandTotal: { $sum: "$grandTotal" }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          projects: {
+            $push: {
+              project: "$_id.project",
+              data: "$data",
+              grandTotal: { $sum: "$grandTotal" }
+            }
+          },
+          grandTotal: { $sum: "$grandTotal" } 
+          
+        }
+      }
+    ];
+
+    const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
+
     const groupedData = await Session.aggregate(aggregationPipeline);
 
     if (sessions.length != 0) {
@@ -170,13 +256,15 @@ export const deleteSession = async (req, res, next) => {
       res.status(200).json({
         sessions,
         sumOfTime,
-        groupedData 
+        groupedData,
+        groupedDataTwo
       });
     } else {
       res.status(200).json({
         sessions,
         sumOfTime: 0,
-        groupedData 
+        groupedData ,
+        groupedDataTwo
       });
     }
   } catch (err) {

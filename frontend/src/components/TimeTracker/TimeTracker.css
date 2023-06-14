@@ -54,6 +54,19 @@
   font-weight: 500;
   font-size: 1.1rem;
 }
+.add-project-section select {
+  width: 90%;
+  height: 65%;
+  outline: none;
+  color: #03a9f4;
+  font-weight: 500;
+  font-size: 0.7rem;
+  border-radius: 5px;
+  border: 1px solid #808080b8;
+}
+.css-1dobdcf {
+  font-size: 16px !important;
+}
 .day-sessions-time-tag {
   color: #999;
   font-size: 0.8rem;
