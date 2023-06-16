@@ -14,12 +14,12 @@ export const createSession = async (req, res, next) => {
         $group: {
           _id: "$date",
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
-        $sort: { createdAt: -1 } 
-      }
+        $sort: { createdAt: -1 },
+      },
     ];
 
     const aggregationPipelineTwo = [
@@ -27,8 +27,8 @@ export const createSession = async (req, res, next) => {
         $group: {
           _id: { date: "$date", project: "$project" },
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
         $group: {
@@ -37,13 +37,18 @@ export const createSession = async (req, res, next) => {
             $push: {
               project: "$_id.project",
               data: "$data",
-              grandTotal: { $sum: "$grandTotal" }
-            }
+              grandTotal: { $sum: "$grandTotal" },
+            },
+            
           },
-          grandTotal: { $sum: "$grandTotal" } 
-          
-        }
-      }
+          grandTotal: { $sum: "$grandTotal" },
+        },
+      },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
     ];
 
     const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
@@ -56,9 +61,7 @@ export const createSession = async (req, res, next) => {
           totalPoints: {
             $sum: "$grandTotal",
           },
-          
         },
-        
       },
     ]);
 
@@ -67,7 +70,7 @@ export const createSession = async (req, res, next) => {
       sessions,
       sumOfTime,
       groupedData,
-      groupedDataTwo
+      groupedDataTwo,
     });
   } catch (err) {
     next(err);
@@ -77,7 +80,7 @@ export const createSession = async (req, res, next) => {
 // Get All Session
 export const getAllSessions = async (req, res, next) => {
   try {
-    const sessions = await Session.find()
+    const sessions = await Session.find();
 
     //This function will group the data based on time
 
@@ -86,12 +89,12 @@ export const getAllSessions = async (req, res, next) => {
         $group: {
           _id: "$date",
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
-        $sort: { createdAt: -1 } 
-      }
+        $sort: { createdAt: -1 },
+      },
     ];
 
     const aggregationPipelineTwo = [
@@ -99,8 +102,8 @@ export const getAllSessions = async (req, res, next) => {
         $group: {
           _id: { date: "$date", project: "$project" },
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
         $group: {
@@ -109,23 +112,24 @@ export const getAllSessions = async (req, res, next) => {
             $push: {
               project: "$_id.project",
               data: "$data",
-              grandTotal: { $sum: "$grandTotal" }
-            }
+              grandTotal: { $sum: "$grandTotal" },
+            },
           },
-          grandTotal: { $sum: "$grandTotal" } 
-          
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
         $sort: {
-          _id: 1
-        }
-      }
+          _id: -1,
+        },
+      },
     ];
 
     const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
 
-    const groupedData = await Session.aggregate(aggregationPipeline).sort({ createdAt: -1 });
+    const groupedData = await Session.aggregate(aggregationPipeline).sort({
+      createdAt: -1,
+    });
 
     if (sessions.length != 0) {
       const gt = await Session.aggregate([
@@ -146,16 +150,15 @@ export const getAllSessions = async (req, res, next) => {
         sessions,
         sumOfTime,
         groupedData,
-        groupedDataTwo
+        groupedDataTwo,
       });
-
     } else {
       res.status(200).json({
         success: true,
         sessions,
-        sumOfTime:0,
+        sumOfTime: 0,
         groupedData,
-        groupedDataTwo
+        groupedDataTwo,
       });
     }
   } catch (err) {
@@ -203,12 +206,12 @@ export const deleteSession = async (req, res, next) => {
         $group: {
           _id: "$date",
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
-        $sort: { createdAt: -1 } 
-      }
+        $sort: { createdAt: -1 },
+      },
     ];
 
     const aggregationPipelineTwo = [
@@ -216,8 +219,8 @@ export const deleteSession = async (req, res, next) => {
         $group: {
           _id: { date: "$date", project: "$project" },
           data: { $push: "$$ROOT" },
-          grandTotal: { $sum: "$grandTotal" }
-        }
+          grandTotal: { $sum: "$grandTotal" },
+        },
       },
       {
         $group: {
@@ -226,13 +229,19 @@ export const deleteSession = async (req, res, next) => {
             $push: {
               project: "$_id.project",
               data: "$data",
-              grandTotal: { $sum: "$grandTotal" }
-            }
+              grandTotal: { $sum: "$grandTotal" },
+            },
           },
-          grandTotal: { $sum: "$grandTotal" } 
-          
-        }
-      }
+          grandTotal: { $sum: "$grandTotal" },
+        },
+      },
+       {
+        $sort: {
+          _id: -1,
+        },
+      },
+      
+      
     ];
 
     const groupedDataTwo = await Session.aggregate(aggregationPipelineTwo);
@@ -257,14 +266,14 @@ export const deleteSession = async (req, res, next) => {
         sessions,
         sumOfTime,
         groupedData,
-        groupedDataTwo
+        groupedDataTwo,
       });
     } else {
       res.status(200).json({
         sessions,
         sumOfTime: 0,
-        groupedData ,
-        groupedDataTwo
+        groupedData,
+        groupedDataTwo,
       });
     }
   } catch (err) {

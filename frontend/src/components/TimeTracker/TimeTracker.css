@@ -30,6 +30,7 @@
 
 .tracker-description2-container input {
   font-weight: 400;
+  background-color: #f6fcff;
 }
 .session-date {
   color: #999;
@@ -90,4 +91,20 @@
 /* Handle on hover */
 .all-session-holder-container::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .tracker-main-container-section-one-timer-container input {
+    font-size: 10px;
+  }
+  .add-project-section select {
+    font-size: 0.5rem;
+  }
+  .session-stats-container p{
+    font-size: 1rem;
+  }
+  .session-stats-container span{
+    font-size: 0.7rem;
+  }
 }

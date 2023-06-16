@@ -249,6 +249,7 @@ function TimeTracker() {
           className="tracker-sidebar"
           sx={{
             // border: "2px solid black",
+            display:{xs:"none",sm:"flex"},
             width: "16%",
             height: "100%",
             borderRight: "0.01rem solid #607D8B",
@@ -258,7 +259,7 @@ function TimeTracker() {
           className="tracker-main-container"
           sx={{
             // border: "2px solid black",
-            width: "84%",
+            width: {xs:"99%",sm:"84%"},
             height: "100%",
             backgroundColor: "white",
             display: "flex",
@@ -276,7 +277,7 @@ function TimeTracker() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              marginTop:"2vh"
+              marginTop: "2vh",
             }}
           >
             <Box
@@ -291,13 +292,14 @@ function TimeTracker() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                flexDirection:{xs:"column",sm:"row"}
               }}
             >
               <Box
                 className="tracker-description-container"
                 sx={{
                   // border: "1px solid black",
-                  width: "55%",
+                  width: {xs:"100%",sm:"55%"},
                   height: "100%",
                   display: "flex",
                   alignItems: "center",
@@ -316,8 +318,8 @@ function TimeTracker() {
               <Box
                 className="tracker-options-container"
                 sx={{
-                  //   border: "1px solid black",
-                  width: "45%",
+                    // border: "1px solid black",
+                  width: {xs:"100%",sm:"45%"},  
                   height: "100%",
                   display: "flex",
                   alignItems: "center",
@@ -335,23 +337,6 @@ function TimeTracker() {
                     justifyContent: "center",
                   }}
                 >
-                  {/* <AddCircleOutlineIcon
-                    sx={{
-                      fontSize: "18px",
-                      marginRight: "5px",
-                      color: "#03a9f4",
-                    }}
-                  />
-                  <Typography
-                    variant="p"
-                    sx={{
-                      fontWeight: "500",
-                      color: "#03a9f4",
-                      fontSize: "15px",
-                    }}
-                  >
-                    Project
-                  </Typography> */}
 
                   <select
                     name="select-value"
@@ -382,12 +367,14 @@ function TimeTracker() {
                   <SellOutlinedIcon
                     sx={{
                       color: "#808080b8",
+                      fontSize:{xs:"1.1rem",sm:"1.5rem"}
                     }}
                   />
                   <Divider orientation="vertical" />
                   <CurrencyRupeeOutlinedIcon
                     sx={{
                       color: "#808080b8",
+                      fontSize:{xs:"1.1rem",sm:"1.5rem"}
                     }}
                   />
                   <Divider orientation="vertical" />
@@ -402,7 +389,7 @@ function TimeTracker() {
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: "500",
-                    fontSize: "19px",
+                    fontSize: {xs:"14px",sm:"19px"},
                   }}
                 >
                   {formatTime(time.hours)}:{formatTime(time.minutes)}:
@@ -424,12 +411,10 @@ function TimeTracker() {
                     size="small"
                     onClick={() => {
                       startTimer();
-                      // console.log(startTime);
-                      // console.log(endTime);
-                      // console.log(totalTime);
                     }}
                     sx={{
                       backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
+                      fontSize:{xs:"0.6rem",sm:"0.8125rem"},
 
                       ":hover": {
                         backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
@@ -492,7 +477,7 @@ function TimeTracker() {
                         alignItems: "center",
                         flexDirection: "column",
                         // marginBottom: "3vh",
-                        marginTop: "2vh",
+                        marginTop: "4vh",
                       }}
                       key={day._id}
                     >
@@ -513,7 +498,7 @@ function TimeTracker() {
                           variant="span"
                           sx={{
                             color: "#999",
-                            fontSize: "0.8rem",
+                            fontSize: {xs:"0.7rem",sm:"0.8rem"},
                             marginLeft: "1.5vw",
                           }}
                         >
@@ -524,7 +509,7 @@ function TimeTracker() {
                             variant="span"
                             sx={{
                               color: "#999",
-                              fontSize: "0.8rem",
+                              fontSize: {xs:"0.7rem",sm:"0.8rem"},
                               marginRight: "1vw",
                             }}
                           >
@@ -536,7 +521,7 @@ function TimeTracker() {
                             sx={{
                               marginRight: "2vw",
                               fontWeight: "500",
-                              fontSize: "1.1rem",
+                              fontSize: {xs:"0.9rem",sm:"1.1rem"},
                             }}
                           >{`${Math.floor(day.grandTotal / (1000 * 60 * 60))
                             .toString()
@@ -570,7 +555,7 @@ function TimeTracker() {
                               sx={{
                                 color: "#03a9f4",
                                 fontWeight: "500",
-                                fontSize: "0.8rem",
+                                fontSize: {xs:"0.7rem",sm:"0.8rem"},
                                 marginLeft: "1.5vw",
                               }}
                             >
@@ -581,7 +566,7 @@ function TimeTracker() {
                                 variant="span"
                                 sx={{
                                   color: "#999",
-                                  fontSize: "0.8rem",
+                                  fontSize: {xs:"0.7rem",sm:"0.8rem"},
                                   marginRight: "1vw",
                                 }}
                               >
@@ -593,7 +578,7 @@ function TimeTracker() {
                                 sx={{
                                   marginRight: "2vw",
                                   fontWeight: "500",
-                                  fontSize: "1rem",
+                                  fontSize: {xs:"0.9rem",sm:"1rem"},
                                   color: "#999",
                                 }}
                               >{`${Math.floor(
@@ -621,7 +606,7 @@ function TimeTracker() {
                                 borderTop: "1px solid #C6D2D9",
                                 width: "100%",
                                 height: "6vh",
-                                backgroundColor: "white",
+                                backgroundColor: "#f6fcff",
                               }}
                               key={session._id}
                             >
@@ -648,7 +633,7 @@ function TimeTracker() {
                                 >
                                   <input
                                     type="text"
-                                    value={session.description}
+                                    value={session.description===""?"No description":session.Description}
                                     onChange={() => {}}
                                   />
                                 </Box>
@@ -669,7 +654,7 @@ function TimeTracker() {
                                       // border: "1px solid black",
                                       height: "100%",
                                       width: "25%",
-                                      display: "flex",
+                                      display: {xs:"none",sm:"flex"},
                                       alignItems: "center",
                                       justifyContent: "center",
                                     }}
@@ -697,10 +682,11 @@ function TimeTracker() {
                                     sx={{
                                       // border: "1px solid black",
                                       height: "100%",
-                                      width: "38%",
+                                      width: {xs:"50%",sm:"38%"},
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "space-around",
+                                      fontSize: {xs:"14px",sm:"19px"}
                                     }}
                                   >
                                     <Divider orientation="vertical" />
@@ -716,12 +702,12 @@ function TimeTracker() {
                                     sx={{
                                       // border: "1px solid black",
                                       height: "100%",
-                                      width: "25%",
+                                      width: {xs:"30%",sm:"25%"},
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
                                       fontWeight: "500",
-                                      fontSize: "19px",
+                                      fontSize: {xs:"14px",sm:"19px"},
                                     }}
                                   >
                                     {session.totalTime}
@@ -758,23 +744,6 @@ function TimeTracker() {
                     </Box>
                   ))}
                 </>
-                // <>
-                //   {myData.map((day) => (
-                //     <Box>
-                //       {day._id}
-                //       {day.projects.map((project) => (
-                //         <Box>
-                //           {project.project}
-                //           <Box>
-                //             {project.data.map((session) => (
-                //               <Box>{session.startTime}</Box>
-                //             ))}
-                //           </Box>
-                //         </Box>
-                //       ))}
-                //     </Box>
-                //   ))}
-                // </>
               )}
             </Box>
           </Box>

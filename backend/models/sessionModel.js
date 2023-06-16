@@ -18,21 +18,18 @@ const sessionSchema = new mongoose.Schema({
   },
   startTime: {
     type: String,
-    
   },
   endTime: {
     type: String,
-    
   },
-  grandTotal:{
-    type:Number,
+  grandTotal: {
+    type: Number,
   },
   date: {
     type: String,
-    
   },
-  project:{
-    type:String
+  project: {
+    type: String,
   },
   createdAt: {
     type: Date,
