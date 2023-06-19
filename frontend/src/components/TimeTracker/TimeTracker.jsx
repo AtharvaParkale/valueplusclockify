@@ -24,7 +24,7 @@ function TimeTracker() {
   const [formattedTotalTime, setFormattedTotalTime] = useState("");
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [stopLoader, setStopLoader] = useState(false);
-  console.log(deleteLoader);
+  // console.log(deleteLoader);
 
   function convertMillisecondsToHMS(milliseconds) {
     const seconds = Math.floor(milliseconds / 1000);
@@ -72,7 +72,7 @@ function TimeTracker() {
       }
 
       today = mm + "/" + dd + "/" + yyyy;
-      console.log(process.env.REACT_APP_API);
+      // console.log(process.env.REACT_APP_API);
 
       const { data } = await axios.post(
         // "http://localhost:4003/api/v1/session/new",
