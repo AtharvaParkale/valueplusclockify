@@ -7,6 +7,7 @@ import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined
 import DeleteIcon from "@mui/icons-material/Delete";
 import Loader from "../Loader/Loader";
 import "./TimeTracker.css";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function TimeTracker() {
   const [time, setTime] = useState({ seconds: 0, minutes: 0, hours: 0 });
@@ -18,9 +19,12 @@ function TimeTracker() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
-  const [projectTitle, setProjectTitle] = useState("Project");
+  const [projectTitle, setProjectTitle] = useState("Project 1");
   const [flag, setFlag] = useState(true);
   const [formattedTotalTime, setFormattedTotalTime] = useState("");
+  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [stopLoader, setStopLoader] = useState(false);
+  console.log(deleteLoader);
 
   function convertMillisecondsToHMS(milliseconds) {
     const seconds = Math.floor(milliseconds / 1000);
@@ -37,6 +41,7 @@ function TimeTracker() {
   const fetchNotes = async () => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API}/sessions`);
+      // const { data } = await axios.get("http://localhost:4003/api/v1/sessions");
       const formattedTime = convertMillisecondsToHMS(data.sumOfTime);
       setFormattedTotalTime(formattedTime);
       setMyData(data.groupedDataTwo);
@@ -52,6 +57,7 @@ function TimeTracker() {
 
   const handleAddSession = async (t, s, e, g) => {
     try {
+      setStopLoader(true);
       var today = new Date();
       var dd = today.getDate();
       var mm = today.getMonth() + 1;
@@ -66,7 +72,7 @@ function TimeTracker() {
       }
 
       today = mm + "/" + dd + "/" + yyyy;
-      console.log(process.env.REACT_APP_API)
+      console.log(process.env.REACT_APP_API);
 
       const { data } = await axios.post(
         // "http://localhost:4003/api/v1/session/new",
@@ -87,6 +93,7 @@ function TimeTracker() {
 
       setDescription("");
       setMyData(data.groupedDataTwo);
+      setStopLoader(false);
     } catch (error) {
       console.log("hi");
       console.log(error.response.data);
@@ -96,6 +103,7 @@ function TimeTracker() {
   const handleDeleteSession = async (id) => {
     try {
       const { data } = await axios.delete(
+        // `http://localhost:4003/api/v1/session/${id}`
         `${process.env.REACT_APP_API}/session/${id}`
       );
 
@@ -103,6 +111,7 @@ function TimeTracker() {
       setFormattedTotalTime(formattedTime);
       setMyData(data.groupedDataTwo);
       setIsLoading(false);
+      setDeleteLoader(false);
     } catch (err) {
       console.log("Error in deleting the session!");
     }
@@ -176,7 +185,7 @@ function TimeTracker() {
   const formatTime = (value) => {
     return value.toString().padStart(2, "0");
   };
- 
+
   useEffect(() => {
     fetchNotes().then((data) => {
       setIsLoading(false);
@@ -191,6 +200,8 @@ function TimeTracker() {
     description,
     formattedTotalTime,
     projectTitle,
+    deleteLoader,
+    stopLoader,
   ]);
 
   return (
@@ -208,7 +219,7 @@ function TimeTracker() {
       <Box
         className="time-tracker-navbar"
         sx={{
-          //   border: "2px solid black",
+          // border: "2px solid black",
           width: "100%",
           height: "10vh",
           boxShadow: "0 1px 9px 0 rgba(247,245,245,.4196078431372549)",
@@ -219,7 +230,7 @@ function TimeTracker() {
       <Box
         className="main-container"
         sx={{
-          //   border: "2px solid black",
+          // border: "2px solid black",
           width: "100%",
           height: "90vh",
           display: "flex",
@@ -266,7 +277,7 @@ function TimeTracker() {
               className="tracker-main-container-section-one-timer-container"
               sx={{
                 width: "95%",
-                height: "8vh",
+                height: { xs: "14vh", sm: "8vh" },
                 border: "1px solid #C6D2D9",
                 borderRadius: "2px",
                 backgroundColor: "#fefefe",
@@ -387,23 +398,36 @@ function TimeTracker() {
                     justifyContent: "center",
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => {
-                      startTimer();
-                    }}
-                    sx={{
-                      backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
-                      fontSize: { xs: "0.6rem", sm: "0.8125rem" },
-
-                      ":hover": {
+                  {stopLoader ? (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        backgroundColor: "#f53f3f",
+                        fontSize: { xs: "0.5rem", sm: "0.6125rem" },
+                      }}
+                    >
+                      Please wait ...
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        startTimer();
+                      }}
+                      sx={{
                         backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
-                      },
-                    }}
-                  >
-                    {isRunning ? "Stop" : "Start"}
-                  </Button>
+                        fontSize: { xs: "0.6rem", sm: "0.8125rem" },
+
+                        ":hover": {
+                          backgroundColor: isRunning ? "#f53f3f" : "#03a9f4",
+                        },
+                      }}
+                    >
+                      {isRunning ? "Stop" : "Start"}
+                    </Button>
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -643,25 +667,7 @@ function TimeTracker() {
                                       alignItems: "center",
                                       justifyContent: "center",
                                     }}
-                                  >
-                                    {/* <AddCircleOutlineIcon
-                                      sx={{
-                                        fontSize: "18px",
-                                        marginRight: "5px",
-                                        color: "#03a9f4",
-                                      }}
-                                    />
-                                    <Typography
-                                      variant="p"
-                                      sx={{
-                                        fontWeight: "500",
-                                        color: "#03a9f4",
-                                        fontSize: "15px",
-                                      }}
-                                    >
-                                      {project.project}
-                                    </Typography> */}
-                                  </Box>
+                                  ></Box>
                                   <Box
                                     className="tags-section"
                                     sx={{
@@ -671,7 +677,7 @@ function TimeTracker() {
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "space-around",
-                                      fontSize: { xs: "14px", sm: "19px" },
+                                      fontSize: { xs: "14px", sm: "16px" },
                                     }}
                                   >
                                     <Divider orientation="vertical" />
@@ -692,7 +698,7 @@ function TimeTracker() {
                                       alignItems: "center",
                                       justifyContent: "center",
                                       fontWeight: "500",
-                                      fontSize: { xs: "14px", sm: "19px" },
+                                      fontSize: { xs: "14px", sm: "16px" },
                                     }}
                                   >
                                     {session.totalTime}
@@ -709,16 +715,21 @@ function TimeTracker() {
                                       cursor: "pointer",
                                     }}
                                   >
-                                    <DeleteIcon
-                                      variant="contained"
-                                      onClick={() => {
-                                        handleDeleteSession(session._id);
-                                      }}
-                                      sx={{
-                                        color: "#7b7b7b",
-                                        fontSize: "20px",
-                                      }}
-                                    />
+                                    {deleteLoader ? (
+                                      <CircularProgress />
+                                    ) : (
+                                      <DeleteIcon
+                                        variant="contained"
+                                        onClick={() => {
+                                          setDeleteLoader(true);
+                                          handleDeleteSession(session._id);
+                                        }}
+                                        sx={{
+                                          color: "#7b7b7b",
+                                          fontSize: "20px",
+                                        }}
+                                      />
+                                    )}
                                   </Box>
                                 </Box>
                               </Box>

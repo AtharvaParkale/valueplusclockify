@@ -92,6 +92,10 @@
 .all-session-holder-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.start-timer-section span{
+  width: 3vh !important;
+  height:3vh!important;
+}
 
 @media only screen and (max-width: 768px) {
   /* For mobile phones: */
@@ -100,11 +104,17 @@
   }
   .add-project-section select {
     font-size: 0.5rem;
+    width: 70%;
+    height: 59%;
   }
   .session-stats-container p{
     font-size: 1rem;
   }
   .session-stats-container span{
     font-size: 0.7rem;
+  }
+  .start-timer-section span{
+    width: 1.5vh !important;
+    height:1.5vh!important;
   }
 }
